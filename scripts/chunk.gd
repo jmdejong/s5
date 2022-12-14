@@ -29,20 +29,22 @@ func render(new_lod):
 			var x1y0 = vert_at(x+tile_size.x, y)
 			var x0y1 = vert_at(x, y+tile_size.y)
 			var x1y1 = vert_at(x+tile_size.x, y+tile_size.y)
-			st.add_vertex(x0y0)
-			st.add_vertex(x1y0)
-			st.add_vertex(x0y1)
-			st.add_vertex(x1y1)
-			st.add_vertex(x0y1)
-			st.add_vertex(x1y0)
-	st.generate_normals()
+			add_vertex(st, x0y0)
+			add_vertex(st, x1y0)
+			add_vertex(st, x0y1)
+			add_vertex(st, x0y1)
+			add_vertex(st, x1y0)
+			add_vertex(st, x1y1)
 	st.generate_tangents()
 	$GroundMesh.mesh = st.commit()
 	
 	$WaterMesh.mesh.size = size
 	lod = new_lod
 
-
+func add_vertex(st, pos):
+	var normal = Plane(pos, vert_at(pos.x+0.01, pos.z), vert_at(pos.x, pos.z+0.01)).normal
+	st.set_normal(normal)
+	st.add_vertex(pos)
 
 func vert_at(x, y):
 	return Vector3(x, blueprint.height_at(position.x + x, position.z + y), y)

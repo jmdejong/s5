@@ -4,38 +4,38 @@
 [ext_resource type="Shader" path="res://shaders/chunk.gdshader" id="2_ce30n"]
 [ext_resource type="Shader" path="res://shaders/terrain.gdshader" id="3_fsq7w"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_iofbo"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ef53v"]
 render_priority = 0
 shader = ExtResource("2_ce30n")
 
-[sub_resource type="ArrayMesh" id="ArrayMesh_vt0uo"]
+[sub_resource type="ArrayMesh" id="ArrayMesh_2gumt"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_g2msa"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_l8hkp"]
 diffuse_mode = 3
 specular_mode = 1
 albedo_color = Color(0, 0, 1, 1)
 roughness = 0.5
 
-[sub_resource type="QuadMesh" id="QuadMesh_qskj6"]
-material = SubResource("StandardMaterial3D_g2msa")
+[sub_resource type="QuadMesh" id="QuadMesh_tm0e7"]
+material = SubResource("StandardMaterial3D_l8hkp")
 orientation = 1
 
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_uxfrb"]
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_wtj2r"]
 seed = 1
 
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_8k5xm"]
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_nw2dv"]
 width = 64
 height = 64
-noise = SubResource("FastNoiseLite_uxfrb")
+noise = SubResource("FastNoiseLite_wtj2r")
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_py5xj"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hqktr"]
 render_priority = 0
 shader = ExtResource("3_fsq7w")
-shader_parameter/noise = SubResource("NoiseTexture2D_8k5xm")
+shader_parameter/noise = SubResource("NoiseTexture2D_nw2dv")
 
-[sub_resource type="PlaneMesh" id="PlaneMesh_d0y7w"]
+[sub_resource type="PlaneMesh" id="PlaneMesh_ifapv"]
 lightmap_size_hint = Vector2i(12, 12)
-material = SubResource("ShaderMaterial_py5xj")
+material = SubResource("ShaderMaterial_hqktr")
 size = Vector2(64, 64)
 subdivide_width = 64
 subdivide_depth = 64
@@ -44,14 +44,14 @@ subdivide_depth = 64
 script = ExtResource("1_y6hx2")
 
 [node name="GroundMesh" type="MeshInstance3D" parent="."]
-material_override = SubResource("ShaderMaterial_iofbo")
-mesh = SubResource("ArrayMesh_vt0uo")
+material_override = SubResource("ShaderMaterial_ef53v")
+mesh = SubResource("ArrayMesh_2gumt")
 
 [node name="WaterMesh" type="MeshInstance3D" parent="."]
 cast_shadow = 0
-mesh = SubResource("QuadMesh_qskj6")
+mesh = SubResource("QuadMesh_tm0e7")
 
 [node name="TestHeightMap" type="MeshInstance3D" parent="."]
 visible = false
 cast_shadow = 0
-mesh = SubResource("PlaneMesh_d0y7w")
+mesh = SubResource("PlaneMesh_ifapv")
