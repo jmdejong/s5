@@ -1,0 +1,85 @@
+[gd_scene load_steps=13 format=3 uid="uid://c427jercgxdng"]
+
+[ext_resource type="Script" path="res://scripts/player.gd" id="1_idwwe"]
+[ext_resource type="Script" path="res://scripts/environment.gd" id="2_3alem"]
+[ext_resource type="Script" path="res://scripts/blueprint.gd" id="3_mupfn"]
+[ext_resource type="Shader" path="res://shaders/terrain.gdshader" id="4_g6vq5"]
+[ext_resource type="Script" path="res://scripts/counters.gd" id="5_6uqoj"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_88g5h"]
+height = 1.8
+
+[sub_resource type="BoxMesh" id="BoxMesh_vcpqy"]
+size = Vector3(20, 1, 20)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_y2d53"]
+seed = 1
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_u7ot6"]
+width = 64
+height = 64
+noise = SubResource("FastNoiseLite_y2d53")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_uejs3"]
+render_priority = 0
+shader = ExtResource("4_g6vq5")
+shader_parameter/noise = SubResource("NoiseTexture2D_u7ot6")
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ktnh0"]
+lightmap_size_hint = Vector2i(12, 12)
+material = SubResource("ShaderMaterial_uejs3")
+size = Vector2(1, 1)
+subdivide_width = 64
+subdivide_depth = 64
+center_offset = Vector3(0.5, 0, 0.5)
+
+[sub_resource type="Environment" id="Environment_7ckii"]
+background_mode = 1
+
+[node name="World" type="Node3D"]
+
+[node name="Player" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+script = ExtResource("1_idwwe")
+
+[node name="Head" type="Node3D" parent="Player"]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0.75, 0)
+
+[node name="Eyes" type="Camera3D" parent="Player/Head"]
+unique_name_in_owner = true
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Player"]
+shape = SubResource("CapsuleShape3D_88g5h")
+
+[node name="Environment" type="Node3D" parent="."]
+script = ExtResource("2_3alem")
+
+[node name="Blueprint" type="Node" parent="Environment"]
+script = ExtResource("3_mupfn")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Environment"]
+transform = Transform3D(0.399639, -0.748608, -0.529032, 0.0828269, -0.545272, 0.834157, -0.912923, -0.37718, -0.155908, 0.0527409, 57.1212, 0.800427)
+shadow_enabled = true
+shadow_opacity = 0.9
+
+[node name="BaseFloor" type="MeshInstance3D" parent="Environment"]
+mesh = SubResource("BoxMesh_vcpqy")
+
+[node name="TestHeightMap" type="MeshInstance3D" parent="Environment"]
+transform = Transform3D(64, 0, 0, 0, 64, 0, 0, 0, 64, 0, 0, 0)
+visible = false
+cast_shadow = 0
+mesh = SubResource("PlaneMesh_ktnh0")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_7ckii")
+
+[node name="Counters" type="VBoxContainer" parent="."]
+offset_left = 34.0
+offset_top = 34.0
+offset_right = 177.0
+offset_bottom = 101.0
+script = ExtResource("5_6uqoj")
+
+[node name="Fps" type="Label" parent="Counters"]
+layout_mode = 2
