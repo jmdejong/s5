@@ -18,6 +18,8 @@ roughness = 0.5
 
 [sub_resource type="QuadMesh" id="QuadMesh_tm0e7"]
 material = SubResource("StandardMaterial3D_l8hkp")
+subdivide_width = 8
+subdivide_depth = 8
 orientation = 1
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_wtj2r"]
