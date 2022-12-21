@@ -2,7 +2,7 @@ extends Node
 
 @export var seed = 1;
 @export var area = Rect2(-0, -0, 4096, 4096)
-@export var shore_offset = 128
+@export var shore_offset = 512
 @export var base_height = -5
 
 var noise = FastNoiseLite.new()
@@ -10,6 +10,7 @@ var noise = FastNoiseLite.new()
 # Called when the node enters the scene tree for the first time.
 func _init():
 	noise.seed = seed
+	noise.noise_type = FastNoiseLite.TYPE_SIMPLEX
 
 
 func height_at(x, y):

@@ -1,10 +1,13 @@
-[gd_scene load_steps=13 format=3 uid="uid://c427jercgxdng"]
+[gd_scene load_steps=17 format=3 uid="uid://c427jercgxdng"]
 
 [ext_resource type="Script" path="res://scripts/player.gd" id="1_idwwe"]
 [ext_resource type="Script" path="res://scripts/environment.gd" id="2_3alem"]
 [ext_resource type="Script" path="res://scripts/blueprint.gd" id="3_mupfn"]
 [ext_resource type="Shader" path="res://shaders/terrain.gdshader" id="4_g6vq5"]
 [ext_resource type="Script" path="res://scripts/counters.gd" id="5_6uqoj"]
+[ext_resource type="Script" path="res://scripts/shaded_map.gd" id="5_olmxm"]
+[ext_resource type="Shader" path="res://shaders/shadedmap.gdshader" id="5_t6wlv"]
+[ext_resource type="ArrayMesh" uid="uid://dps2usrcyfqts" path="res://helpers/lodmap.obj" id="6_14r0s"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_88g5h"]
 height = 1.8
@@ -33,13 +36,17 @@ subdivide_width = 64
 subdivide_depth = 64
 center_offset = Vector3(0.5, 0, 0.5)
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_nvatu"]
+render_priority = 0
+shader = ExtResource("5_t6wlv")
+
 [sub_resource type="Environment" id="Environment_7ckii"]
 background_mode = 1
 
 [node name="World" type="Node3D"]
 
 [node name="Player" type="CharacterBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 20, 0)
 script = ExtResource("1_idwwe")
 
 [node name="Head" type="Node3D" parent="Player"]
@@ -56,6 +63,7 @@ script = ExtResource("2_3alem")
 
 [node name="Blueprint" type="Node" parent="Environment"]
 script = ExtResource("3_mupfn")
+area = Rect2(-1024, -1024, 4096, 4096)
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="Environment"]
 transform = Transform3D(0.399639, -0.748608, -0.529032, 0.0828269, -0.545272, 0.834157, -0.912923, -0.37718, -0.155908, 0.0527409, 57.1212, 0.800427)
@@ -71,6 +79,12 @@ visible = false
 cast_shadow = 0
 mesh = SubResource("PlaneMesh_ktnh0")
 
+[node name="ShadedMap" type="MeshInstance3D" parent="Environment"]
+visible = false
+material_override = SubResource("ShaderMaterial_nvatu")
+mesh = ExtResource("6_14r0s")
+script = ExtResource("5_olmxm")
+
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_7ckii")
 
@@ -78,9 +92,11 @@ environment = SubResource("Environment_7ckii")
 offset_left = 34.0
 offset_top = 34.0
 offset_right = 177.0
-offset_bottom = 101.0
+offset_bottom = 158.0
 script = ExtResource("5_6uqoj")
 
 [node name="Fps" type="Label" parent="Counters"]
-offset_right = 143.0
-offset_bottom = 23.0
+layout_mode = 2
+
+[node name="Pos" type="Label" parent="Counters"]
+layout_mode = 2

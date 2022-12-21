@@ -1,0 +1,32 @@
+[gd_scene load_steps=6 format=3 uid="uid://cm4xk168u8rq5"]
+
+[ext_resource type="Script" path="res://scripts/tree_chunk.gd" id="1_s5p0d"]
+[ext_resource type="Shader" path="res://shaders/chunk.gdshader" id="2_whork"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ldw22"]
+render_priority = 0
+shader = ExtResource("2_whork")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pp0wk"]
+diffuse_mode = 3
+specular_mode = 1
+albedo_color = Color(0, 0, 1, 1)
+roughness = 0.5
+
+[sub_resource type="QuadMesh" id="QuadMesh_6ifk3"]
+material = SubResource("StandardMaterial3D_pp0wk")
+subdivide_width = 8
+subdivide_depth = 8
+orientation = 1
+
+[node name="TreeChunk" type="Node3D"]
+script = ExtResource("1_s5p0d")
+
+[node name="GroundMesh" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_ldw22")
+
+[node name="WaterMesh" type="MeshInstance3D" parent="."]
+cast_shadow = 0
+mesh = SubResource("QuadMesh_6ifk3")
+
+[connection signal="visibility_changed" from="." to="." method="_on_visibility_changed"]

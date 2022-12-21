@@ -2,12 +2,24 @@ extends Node3D
 
 
 const Chunk = preload("res://scenes/chunk.tscn")
+const TreeChunk = preload("res://scenes/tree_chunk.tscn")
+const max_lod = 10
+const min_lod = 0
 var chunks = {}
+var root_chunk
+var max_depth = 8
+var used_chunks = []
 @export var chunk_size = Vector2(32, 32)
-@export var max_render_distance = 512
+@export var max_render_distance = 1024
+
+#func _init():
+#	for i in range(min_lod, max_lod):
+#		chunks[i] = {}
+		
 
 func _ready():
 	#add_chunk(0, 0)
+	root_chunk = add_tree_chunk(Vector2(0, 0), 4096, 0)
 	for x in range(-4, 4):
 		for y in range(-4, 4):
 			add_chunk(Vector2i(x, y))
@@ -20,10 +32,13 @@ func add_chunk(pos):
 	add_child(chunk)
 	chunks[pos] = chunk
 
-func set_viewpoint(viewpoint):
-	var viewpoint2 = Vector2(viewpoint.x, viewpoint.z)
+func set_viewpoint(viewpoint2):
+	# render_chunks(viewpoint2)
+	render_tree_cunks(viewpoint2)
+
+func render_chunks(viewpoint2):
 	var viewpos = Vector2i((viewpoint2 / chunk_size).round())
-	var to_render = [[], [], [], []]
+	var to_render = [null, null, null, null, null, null, null]
 	for chunk in chunks_within_distance(viewpoint2):
 		var chunkpoint2 = Vector2(chunk.position.x, chunk.position.z)
 		var dist = viewpoint2.distance_to(chunkpoint2)
@@ -35,11 +50,13 @@ func set_viewpoint(viewpoint):
 				if dist < 64:
 					needed_lod = 3
 		if chunk.lod < needed_lod:
-			to_render[needed_lod].append(chunk)
+			var closest_lod = to_render[needed_lod]
+			if closest_lod == null or dist < viewpoint2.distance_to(Vector2(closest_lod.position.x, closest_lod.position.z)):
+				to_render[needed_lod] = chunk
 	for lod in range(len(to_render)):
 		var level = to_render[lod]
-		if not level.is_empty():
-			level.front().render(lod)
+		if level != null:
+			level.render(lod)
 
 func chunks_within_distance(viewpoint2):
 	var selected_chunks = []
@@ -53,8 +70,62 @@ func chunks_within_distance(viewpoint2):
 				add_chunk(pos)
 			selected_chunks.append(chunks[pos])
 	return selected_chunks
-	
-# Called every frame. 'delta' is the elapsed time since the previous frame.
+
+func render_shaded(viewpoint2):
+	$ShadedMap.position = Vector3(viewpoint2.x, 0, viewpoint2.y)
+
 func _process(delta):
 	var camera_pos = get_node("%Eyes").global_position
-	set_viewpoint(camera_pos)
+	var viewpoint2 = Vector2(camera_pos.x, camera_pos.z)
+	set_viewpoint(viewpoint2)
+	$ShadedMap.position.x = camera_pos.x
+	$ShadedMap.position.z = camera_pos.z
+	
+
+func render_grid(area, subdivisions):
+	pass
+
+func render_tree_cunks(viewpoint2):
+	if used_chunks.is_empty():
+		used_chunks.append(root_chunk)
+	var branch_chunks = [root_chunk]
+	var to_render = []
+	var splits = 0
+	while not branch_chunks.is_empty():
+		var chunk = branch_chunks.pop_front() # todo: more efficient FIFO queue
+		if should_split(chunk, viewpoint2) and chunk.children == null and splits < 1:
+			splits += 1
+			var new_size = chunk.size / 2;
+			chunk.children = []
+			for o in [Vector2(1, 1), Vector2(-1, -1), Vector2(-1, 1), Vector2(1, -1)]:
+				chunk.children.append(
+					add_tree_chunk(Vector2(chunk.position.x, chunk.position.z) - o * new_size / 2, new_size, chunk.depth + 1)
+				)
+		if chunk.children == null:
+			chunk.visible = true
+		else:
+			chunk.visible = false
+			branch_chunks.append_array(chunk.children)
+	# var i = 0
+	# for chunk in to_render:
+	# 	if i == 1:
+	# 		break
+	# 	i+=1
+	# 	chunk.render_self()
+
+func add_tree_chunk(pos, size, depth):
+	var chunk = TreeChunk.instantiate()
+	chunk.position.x = pos.x
+	chunk.position.z = pos.y
+	chunk.size = size
+	chunk.blueprint = $Blueprint
+	chunk.depth = depth
+	chunk.render()
+	add_child(chunk)
+	return chunk
+
+
+func should_split(chunk, viewpoint2):
+	return chunk.distance_to_edge(viewpoint2) < chunk.size and chunk.depth < max_depth
+
+

@@ -2,7 +2,7 @@ extends CharacterBody3D
 
 
 const MOUSE_SENSITIVITY = 0.003
-const speed = 10
+const speed = 3
 const sprint_speed = 100
 
 # Called when the node enters the scene tree for the first time.
