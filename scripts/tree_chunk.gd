@@ -3,12 +3,32 @@ extends Node3D
 var size;
 var depth;
 var blueprint;
-var children = null;
+var children = null
 const tiles = Vector2(32, 32)
+@export var shader: Shader
 
 func render():
 	var size2 = Vector2(size, size)
 	$WaterMesh.scale = Vector3(size, 1, size)
+	$TerrainMesh.scale = Vector3(size, 1, size)
+	var start_position = Vector2(self.position.x - size / 2, self.position.z - size / 2)/ blueprint.heightmap.get_size()
+	#var tm = ShaderMaterial.new()
+	#tm.shader = shader
+	# hm.set_shader_parameter("size", size2)
+	# hm.set_shader_parameter("center", Vector2(position.x, position.z))
+	#tm.set_shader_parameter("noise", blueprint.heightmap)
+	#tm.set_shader_parameter("size", size2 / blueprint.heightmap.get_size())
+	#tm.set_shader_parameter("start_position", start_position)
+	$TerrainMesh.mesh.material.set_shader_parameter("noise", blueprint.heightmap)
+	$TerrainMesh.mesh.material.set_shader_parameter("area_min", blueprint.aabb.position)
+	$TerrainMesh.mesh.material.set_shader_parameter("area_size", blueprint.aabb.size)
+	$TerrainMesh.custom_aabb = AABB(
+			Vector3(-0.5, blueprint.aabb.position.y, -0.5),
+			Vector3(1, blueprint.aabb.size.y, 1)
+	)
+	#$TerrainMesh.mesh.material.set_shader_parameter("size", size2)
+	#$TerrainMesh.mesh.material.set_shader_parameter("start_position", Vector2(self.position.x - size / 2, self.position.y - size / 2))
+	return
 	
 	var area = Rect2(Vector2(position.x, position.z) - size2 / 2, size2)
 	if not area.intersects(blueprint.area):
@@ -52,6 +72,7 @@ func render():
 	$GroundMesh.mesh = mesh
 
 func vert_at(x, y):
+	# return Vector3(x, 0, y)
 	return Vector3(x, blueprint.height_at(position.x + x, position.z + y), y)
 
 func distance_to_edge(pos: Vector2):

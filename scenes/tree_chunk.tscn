@@ -1,32 +1,55 @@
-[gd_scene load_steps=6 format=3 uid="uid://cm4xk168u8rq5"]
+[gd_scene load_steps=10 format=3 uid="uid://cm4xk168u8rq5"]
 
 [ext_resource type="Script" path="res://scripts/tree_chunk.gd" id="1_s5p0d"]
 [ext_resource type="Shader" path="res://shaders/chunk.gdshader" id="2_whork"]
+[ext_resource type="Shader" path="res://shaders/meshterrain.gdshader" id="3_dtpd5"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_ldw22"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bkto4"]
 render_priority = 0
 shader = ExtResource("2_whork")
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pp0wk"]
+[sub_resource type="ImageTexture" id="ImageTexture_482k6"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1t1vg"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("3_dtpd5")
+shader_parameter/area_min = null
+shader_parameter/area_size = null
+shader_parameter/noise = SubResource("ImageTexture_482k6")
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_i17cq"]
+resource_local_to_scene = true
+material = SubResource("ShaderMaterial_1t1vg")
+size = Vector2(1, 1)
+subdivide_width = 63
+subdivide_depth = 63
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vs4f0"]
 diffuse_mode = 3
 specular_mode = 1
 albedo_color = Color(0, 0, 1, 1)
 roughness = 0.5
 
-[sub_resource type="QuadMesh" id="QuadMesh_6ifk3"]
-material = SubResource("StandardMaterial3D_pp0wk")
-subdivide_width = 8
-subdivide_depth = 8
+[sub_resource type="QuadMesh" id="QuadMesh_ep5ku"]
+material = SubResource("StandardMaterial3D_vs4f0")
+subdivide_width = 7
+subdivide_depth = 7
 orientation = 1
 
 [node name="TreeChunk" type="Node3D"]
 script = ExtResource("1_s5p0d")
+shader = ExtResource("3_dtpd5")
 
 [node name="GroundMesh" type="MeshInstance3D" parent="."]
-material_override = SubResource("ShaderMaterial_ldw22")
+visible = false
+material_override = SubResource("ShaderMaterial_bkto4")
+
+[node name="TerrainMesh" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_i17cq")
 
 [node name="WaterMesh" type="MeshInstance3D" parent="."]
 cast_shadow = 0
-mesh = SubResource("QuadMesh_6ifk3")
+mesh = SubResource("QuadMesh_ep5ku")
 
 [connection signal="visibility_changed" from="." to="." method="_on_visibility_changed"]

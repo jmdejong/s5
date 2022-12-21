@@ -7,7 +7,7 @@ const max_lod = 10
 const min_lod = 0
 var chunks = {}
 var root_chunk
-var max_depth = 8
+var min_size = 16
 var used_chunks = []
 @export var chunk_size = Vector2(32, 32)
 @export var max_render_distance = 1024
@@ -17,12 +17,12 @@ var used_chunks = []
 #		chunks[i] = {}
 		
 
-func _ready():
+#func _ready():
 	#add_chunk(0, 0)
-	root_chunk = add_tree_chunk(Vector2(0, 0), 4096, 0)
-	for x in range(-4, 4):
-		for y in range(-4, 4):
-			add_chunk(Vector2i(x, y))
+	#root_chunk = add_tree_chunk(Vector2(0, 0), 4096, 0)
+	#for x in range(-4, 4):
+	#	for y in range(-4, 4):
+	#		add_chunk(Vector2i(x, y))
 
 func add_chunk(pos):
 	var chunk = Chunk.instantiate() 
@@ -86,6 +86,10 @@ func render_grid(area, subdivisions):
 	pass
 
 func render_tree_cunks(viewpoint2):
+	if $Blueprint.heightmap == null:
+		return
+	if root_chunk == null:
+		root_chunk = add_tree_chunk(Vector2(0, 0), 8192, 0)
 	if used_chunks.is_empty():
 		used_chunks.append(root_chunk)
 	var branch_chunks = [root_chunk]
@@ -126,6 +130,6 @@ func add_tree_chunk(pos, size, depth):
 
 
 func should_split(chunk, viewpoint2):
-	return chunk.distance_to_edge(viewpoint2) < chunk.size and chunk.depth < max_depth
+	return chunk.distance_to_edge(viewpoint2) < chunk.size and chunk.size > min_size
 
 
