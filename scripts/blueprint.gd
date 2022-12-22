@@ -1,21 +1,27 @@
 extends Node
 
 @export var seed = 1;
-@export var aabb = AABB(Vector3(-1024, -128, -1024), Vector3(4096, 512, 4096))
-@export var resolution = 4
+@export var aabb = AABB(Vector3(-1024, -256, -1024), Vector3(4096, 1024, 4096))
+@export var resolution = 1
 @export var shore_offset = 512
-@export var base_height = -5
+@export var groundshader: Shader
+@export var gen_gpu = true
 
+var base_height = -5
 var noise = FastNoiseLite.new()
 var heightmap = null;
+var heightmaterial = null;
+var area;
 
 # Called when the node enters the scene tree for the first time.
 func _init():
 	noise.seed = seed
 	noise.noise_type = FastNoiseLite.TYPE_SIMPLEX
+	area = Rect2(aabb.position.x, aabb.position.z, aabb.size.x, aabb.size.z)
 
 func _ready():
-	var area = Rect2(aabb.position.x, aabb.position.z, aabb.size.x, aabb.size.z)
+	if not gen_gpu:
+		return
 	$HeightView.size = area.size * resolution
 	$HeightView/HeightMap.size = area.size * resolution
 	$HeightView/HeightMap.material.set_shader_parameter("area_min", aabb.position)
@@ -23,6 +29,11 @@ func _ready():
 	$HeightView/HeightMap.material.set_shader_parameter("shore_offset", shore_offset)
 	await RenderingServer.frame_post_draw
 	heightmap = $HeightView.get_texture()
+	heightmaterial = ShaderMaterial.new()
+	heightmaterial.shader = groundshader
+	heightmaterial.set_shader_parameter("noise", heightmap)
+	heightmaterial.set_shader_parameter("area_min", aabb.position)
+	heightmaterial.set_shader_parameter("area_size", aabb.size)
 
 
 func height_at(x, y):
