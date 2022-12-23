@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://c427jercgxdng"]
+[gd_scene load_steps=15 format=3 uid="uid://c427jercgxdng"]
 
 [ext_resource type="Script" path="res://scripts/player.gd" id="1_idwwe"]
 [ext_resource type="Shader" path="res://shaders/heightmap.gdshader" id="1_m30d6"]
@@ -6,9 +6,22 @@
 [ext_resource type="Script" path="res://scripts/blueprint.gd" id="3_mupfn"]
 [ext_resource type="Shader" path="res://shaders/meshterrain.gdshader" id="4_sui4e"]
 [ext_resource type="Script" path="res://scripts/counters.gd" id="5_6uqoj"]
+[ext_resource type="Texture2D" uid="uid://jq8u2lb4tid5" path="res://assets/ground_grass.png" id="5_helgd"]
+[ext_resource type="Texture2D" uid="uid://c54s8dmii51qq" path="res://assets/ground_sand.png" id="6_ogkde"]
+[ext_resource type="Texture2D" uid="uid://cy08sy2x31gtg" path="res://assets/ground_stone.png" id="7_s21i6"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_88g5h"]
 height = 1.8
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_4igo1"]
+render_priority = 0
+shader = ExtResource("4_sui4e")
+shader_parameter/area_min = null
+shader_parameter/area_size = null
+shader_parameter/texture_size = 2.0
+shader_parameter/grass_texture = ExtResource("5_helgd")
+shader_parameter/sand_texture = ExtResource("6_ogkde")
+shader_parameter/stone_texture = ExtResource("7_s21i6")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_i4viq"]
 shader = ExtResource("1_m30d6")
@@ -43,6 +56,7 @@ script = ExtResource("2_3alem")
 [node name="Blueprint" type="Node" parent="Environment"]
 script = ExtResource("3_mupfn")
 groundshader = ExtResource("4_sui4e")
+heightmaterial = SubResource("ShaderMaterial_4igo1")
 
 [node name="HeightView" type="SubViewport" parent="Environment/Blueprint"]
 size = Vector2i(256, 256)

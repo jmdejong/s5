@@ -1,12 +1,20 @@
 shader_type spatial;
 render_mode world_vertex_coords;
 
+
+#include "shaders/ashima_simplex.gdshaderinc"
+
 uniform sampler2D noise;
 uniform vec3 area_min;
 uniform vec3 area_size;
+uniform sampler2D grass_texture;
+uniform sampler2D sand_texture;
+uniform sampler2D stone_texture;
+uniform float texture_size;
 
 varying vec3 normals;
-varying float vert_height;
+// varying vec2 tex_uv;
+varying vec3 p;
 
 float height_at(vec2 position) {
 	vec4 tex = texture(noise, (position - area_min.xz) / area_size.xz);
@@ -18,27 +26,46 @@ void vertex() {
 	vec2 pos = clamp(VERTEX.xz, area_min.xz, area_size.xz + area_min.xz);
 	float k = height_at(pos);
 	VERTEX.y = k;
-	vert_height = k;
+// 	vert_height = k;
 	float delta = 1.0;
 	normals = normalize(-cross(
 		vec3(-delta, k - height_at(pos + vec2(-delta, 0)), 0),
 		vec3(0, k - height_at(pos + vec2(0, -delta)), -delta)
 	));
 	NORMAL = normals;
+	p = VERTEX;
 }
 
 
 void fragment() {
-	if (vert_height < 0.0) {
+	if (p.y < 0.0) {
 		discard;
 	}
-	ALBEDO = mix(
-		vec3(0.1, 0.1, 0.1),
-		mix(
-			vec3(0.6, 0.6, 0),
-			vec3(0, 0.5, 0),
-			clamp(vert_height*2.0-3.0, 0.0, 1.0)
-		),
-		clamp((normals.y - 0.7)* 20.0, 0, 1)
-	);
+	vec2 tex_uv = fract(p.xz / texture_size);
+// 	sampler2D tex = normals.y > 0.7 ? stone_texture : p.y < 2.0 ? sand_texture : grass_texture;
+	ALBEDO =
+		normals.y < 0.7 ?
+			texture(stone_texture, tex_uv).xyz :
+			(p.y + snoise(p.xz * 40.0) * 0.05 + snoise(p.xz * 1.0) * 0.1 + snoise(p.xz * 0.05) * 0.4 < 1.5 ?
+				texture(sand_texture, tex_uv).xyz :
+				texture(grass_texture, tex_uv).xyz
+			);
+// 	ALBEDO = mix(
+// 		texture(stone_texture, tex_uv).xyz,
+// 		mix(
+// 			texture(sand_texture, tex_uv).xyz,
+// 			texture(grass_texture, tex_uv).xyz,
+// 			clamp(vert_height*2.0-3.0, 0.0, 1.0)
+// 		),
+// 		clamp((normals.y - 0.7)* 20.0, 0, 1)
+// 	);
+// 	ALBEDO = mix(
+// 		vec3(0.1, 0.1, 0.1),
+// 		mix(
+// 			vec3(0.6, 0.6, 0),
+// 			vec3(0, 0.5, 0),
+// 			clamp(vert_height*2.0-3.0, 0.0, 1.0)
+// 		),
+// 		clamp((normals.y - 0.7)* 20.0, 0, 1)
+// 	);
 }

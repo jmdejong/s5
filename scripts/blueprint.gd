@@ -6,11 +6,11 @@ extends Node
 @export var shore_offset = 512
 @export var groundshader: Shader
 @export var gen_gpu = true
+@export var heightmaterial: Material
 
 var base_height = -5
 var noise = FastNoiseLite.new()
 var heightmap = null;
-var heightmaterial = null;
 var area;
 
 # Called when the node enters the scene tree for the first time.
@@ -29,8 +29,8 @@ func _ready():
 	$HeightView/HeightMap.material.set_shader_parameter("shore_offset", shore_offset)
 	await RenderingServer.frame_post_draw
 	heightmap = $HeightView.get_texture()
-	heightmaterial = ShaderMaterial.new()
-	heightmaterial.shader = groundshader
+	# heightmaterial = ShaderMaterial.new()
+	# heightmaterial.shader = groundshader
 	heightmaterial.set_shader_parameter("noise", heightmap)
 	heightmaterial.set_shader_parameter("area_min", aabb.position)
 	heightmaterial.set_shader_parameter("area_size", aabb.size)

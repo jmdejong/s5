@@ -4,35 +4,36 @@
 [ext_resource type="Shader" path="res://shaders/chunk.gdshader" id="2_whork"]
 [ext_resource type="Shader" path="res://shaders/meshterrain.gdshader" id="3_dtpd5"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_wbvvp"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_n0e7p"]
 render_priority = 0
 shader = ExtResource("2_whork")
 
-[sub_resource type="ImageTexture" id="ImageTexture_g14vh"]
+[sub_resource type="ImageTexture" id="ImageTexture_woeo5"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_jpkqg"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_plgfh"]
 resource_local_to_scene = true
 render_priority = 0
 shader = ExtResource("3_dtpd5")
 shader_parameter/area_min = null
 shader_parameter/area_size = null
-shader_parameter/noise = SubResource("ImageTexture_g14vh")
+shader_parameter/texture_size = null
+shader_parameter/noise = SubResource("ImageTexture_woeo5")
 
-[sub_resource type="PlaneMesh" id="PlaneMesh_v7qja"]
+[sub_resource type="PlaneMesh" id="PlaneMesh_r5w0t"]
 resource_local_to_scene = true
-material = SubResource("ShaderMaterial_jpkqg")
+material = SubResource("ShaderMaterial_plgfh")
 size = Vector2(1, 1)
 subdivide_width = 63
 subdivide_depth = 63
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_nr4bc"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_oecmr"]
 diffuse_mode = 3
 specular_mode = 1
 albedo_color = Color(0, 0, 1, 1)
 roughness = 0.5
 
-[sub_resource type="QuadMesh" id="QuadMesh_q6mvb"]
-material = SubResource("StandardMaterial3D_nr4bc")
+[sub_resource type="QuadMesh" id="QuadMesh_yhtmk"]
+material = SubResource("StandardMaterial3D_oecmr")
 subdivide_width = 7
 subdivide_depth = 7
 orientation = 1
@@ -42,13 +43,13 @@ script = ExtResource("1_s5p0d")
 shader = ExtResource("3_dtpd5")
 
 [node name="GroundMesh" type="MeshInstance3D" parent="."]
-material_override = SubResource("ShaderMaterial_wbvvp")
+material_override = SubResource("ShaderMaterial_n0e7p")
 
 [node name="TerrainMesh" type="MeshInstance3D" parent="."]
-mesh = SubResource("PlaneMesh_v7qja")
+mesh = SubResource("PlaneMesh_r5w0t")
 
 [node name="WaterMesh" type="MeshInstance3D" parent="."]
 cast_shadow = 0
-mesh = SubResource("QuadMesh_q6mvb")
+mesh = SubResource("QuadMesh_yhtmk")
 
 [connection signal="visibility_changed" from="." to="." method="_on_visibility_changed"]
