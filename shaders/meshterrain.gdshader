@@ -16,6 +16,28 @@ varying vec3 normals;
 // varying vec2 tex_uv;
 varying vec3 p;
 
+vec4 interpolate_sample(sampler2D tex, vec2 big_uv, int lod) {
+	ivec2 size = textureSize(tex, lod);
+	vec2 xy = big_uv * vec2(size);
+	ivec2 ixy = ivec2(floor(xy));
+	vec2 uv = fract(xy);
+// 	return texelFetch(tex, ixy, lod);
+	return mix(
+			mix(
+			texelFetch(tex, ixy, lod),
+			texelFetch(tex, ixy + ivec2(1, 0), lod),
+			uv.x
+		),
+		mix(
+			texelFetch(tex, ixy + ivec2(0, 1), lod),
+			texelFetch(tex, ixy + ivec2(1, 1), lod),
+			uv.x
+		),
+		uv.y
+	);
+}
+
+
 float height_at(vec2 position) {
 	vec4 tex = texture(noise, (position - area_min.xz) / area_size.xz);
 	return (tex.x + tex.y / 255.0 ) * area_size.y + area_min.y;
@@ -41,12 +63,15 @@ void fragment() {
 	vec2 tex_uv = fract(p.xz / texture_size);
 // 	sampler2D tex = normals.y > 0.7 ? stone_texture : p.y < 2.0 ? sand_texture : grass_texture;
 	vec4 t =
-		normals.y < 0.7 ?
-			texture(stone_texture, tex_uv) :
-			(p.y + snoise(p.xz * 20.0) * 0.02 + snoise(p.xz * 1.0) * 0.1 + snoise(p.xz * 0.05) * 0.4 < 1.5 ?
-				texture(sand_texture, tex_uv) :
-				texture(grass_texture, tex_uv)
-			);
+		mix(
+			texture(stone_texture, tex_uv),
+			mix(
+				texture(sand_texture, tex_uv),
+				texture(grass_texture, tex_uv),
+				clamp((p.y + snoise(p.xz * 20.0) * 0.02 + snoise(p.xz * 1.0) * 0.1 + snoise(p.xz * 0.05) * 0.4 - 1.5) * 50.0, 0.0, 1.0)
+			),
+			clamp((normals.y - 0.7)* 100.0, 0, 1)
+		);
 	float sea_height = clamp(1.0 + p.y/4.0, 0.0, 1.0);
 	vec3 blue = vec3(sea_height, sea_height, 1.0);
 	ALBEDO = blue * t.xyz;

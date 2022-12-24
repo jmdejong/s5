@@ -4,60 +4,60 @@
 [ext_resource type="Shader" path="res://shaders/chunk.gdshader" id="2_whork"]
 [ext_resource type="Shader" path="res://shaders/meshterrain.gdshader" id="3_dtpd5"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_2ppt7"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rw7lq"]
 render_priority = 0
 shader = ExtResource("2_whork")
 
-[sub_resource type="ImageTexture" id="ImageTexture_vmmim"]
+[sub_resource type="ImageTexture" id="ImageTexture_iq6o1"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_6b2ej"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rl4sl"]
 resource_local_to_scene = true
 render_priority = 0
 shader = ExtResource("3_dtpd5")
 shader_parameter/area_min = null
 shader_parameter/area_size = null
 shader_parameter/texture_size = null
-shader_parameter/noise = SubResource("ImageTexture_vmmim")
+shader_parameter/noise = SubResource("ImageTexture_iq6o1")
 
-[sub_resource type="PlaneMesh" id="PlaneMesh_7kgph"]
+[sub_resource type="PlaneMesh" id="PlaneMesh_oyjlg"]
 resource_local_to_scene = true
-material = SubResource("ShaderMaterial_6b2ej")
+material = SubResource("ShaderMaterial_rl4sl")
 size = Vector2(1, 1)
 subdivide_width = 63
 subdivide_depth = 63
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lhtvl"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fqyrp"]
 transparency = 1
 diffuse_mode = 3
 specular_mode = 1
 albedo_color = Color(0, 0, 1, 0.533333)
 roughness = 0.5
 
-[sub_resource type="QuadMesh" id="QuadMesh_giawa"]
-material = SubResource("StandardMaterial3D_lhtvl")
+[sub_resource type="QuadMesh" id="QuadMesh_1d41p"]
+material = SubResource("StandardMaterial3D_fqyrp")
 subdivide_width = 15
 subdivide_depth = 15
 orientation = 1
 
-[sub_resource type="HeightMapShape3D" id="HeightMapShape3D_f4vc8"]
+[sub_resource type="HeightMapShape3D" id="HeightMapShape3D_4noqc"]
 
 [node name="TreeChunk" type="Node3D"]
 script = ExtResource("1_s5p0d")
 shader = ExtResource("3_dtpd5")
 
 [node name="GroundMesh" type="MeshInstance3D" parent="."]
-material_override = SubResource("ShaderMaterial_2ppt7")
+material_override = SubResource("ShaderMaterial_rw7lq")
 
 [node name="TerrainMesh" type="MeshInstance3D" parent="."]
-mesh = SubResource("PlaneMesh_7kgph")
+mesh = SubResource("PlaneMesh_oyjlg")
 
 [node name="WaterMesh" type="MeshInstance3D" parent="."]
 cast_shadow = 0
-mesh = SubResource("QuadMesh_giawa")
+mesh = SubResource("QuadMesh_1d41p")
 
 [node name="Floor" type="StaticBody3D" parent="."]
 
 [node name="Height" type="CollisionShape3D" parent="Floor"]
-shape = SubResource("HeightMapShape3D_f4vc8")
+shape = SubResource("HeightMapShape3D_4noqc")
 
 [connection signal="visibility_changed" from="." to="." method="_on_visibility_changed"]
