@@ -25,9 +25,9 @@ shader_parameter/stone_texture = ExtResource("7_s21i6")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_i4viq"]
 shader = ExtResource("1_m30d6")
-shader_parameter/area_min = null
-shader_parameter/area_size = null
-shader_parameter/shore_offset = null
+shader_parameter/area_min = Vector3(0, -256, 0)
+shader_parameter/area_size = Vector3(2048, 1024, 2048)
+shader_parameter/shore_offset = 512.0
 
 [sub_resource type="BoxMesh" id="BoxMesh_vcpqy"]
 size = Vector3(20, 1, 20)
@@ -46,6 +46,7 @@ transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0.7
 
 [node name="Eyes" type="Camera3D" parent="Player/Head"]
 unique_name_in_owner = true
+current = true
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Player"]
 shape = SubResource("CapsuleShape3D_88g5h")
@@ -65,8 +66,8 @@ render_target_update_mode = 1
 [node name="HeightMap" type="ColorRect" parent="Environment/Blueprint/HeightView"]
 material = SubResource("ShaderMaterial_i4viq")
 custom_minimum_size = Vector2(256, 256)
-offset_right = 40.0
-offset_bottom = 40.0
+offset_right = 256.0
+offset_bottom = 256.0
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="Environment"]
 transform = Transform3D(0.399639, -0.748608, -0.529032, 0.0828269, -0.545272, 0.834157, -0.912923, -0.37718, -0.155908, 0.0527409, 57.1212, 0.800427)
@@ -87,7 +88,10 @@ offset_bottom = 158.0
 script = ExtResource("5_6uqoj")
 
 [node name="Fps" type="Label" parent="Counters"]
-layout_mode = 2
+offset_right = 143.0
+offset_bottom = 23.0
 
 [node name="Pos" type="Label" parent="Counters"]
-layout_mode = 2
+offset_top = 27.0
+offset_right = 143.0
+offset_bottom = 50.0

@@ -2,7 +2,6 @@ extends Node3D
 
 const TreeChunk = preload("res://scenes/tree_chunk.tscn")
 var root_chunk
-var min_size = 64
 @export var max_render_distance = 1024
 
 func set_viewpoint(viewpoint2):
@@ -18,7 +17,7 @@ func render_tree_cunks(viewpoint2):
 	if $Blueprint.heightmap == null and $Blueprint.gen_gpu:
 		return
 	if root_chunk == null:
-		root_chunk = add_tree_chunk(Vector2(0, 0), 8192, 0)
+		root_chunk = add_tree_chunk(Vector2(0, 0), 8192)
 	var branch_chunks = [root_chunk]
 	var to_render = []
 	var splits = 0
@@ -30,7 +29,7 @@ func render_tree_cunks(viewpoint2):
 			chunk.children = []
 			for o in [Vector2(1, 1), Vector2(-1, -1), Vector2(-1, 1), Vector2(1, -1)]:
 				chunk.children.append(
-					add_tree_chunk(Vector2(chunk.position.x, chunk.position.z) - o * new_size / 2, new_size, chunk.depth + 1)
+					add_tree_chunk(Vector2(chunk.position.x, chunk.position.z) - o * new_size / 2, new_size)
 				)
 		elif should_unsplit(chunk, viewpoint2):
 			chunk.prune()
@@ -40,22 +39,21 @@ func render_tree_cunks(viewpoint2):
 			chunk.visible = false
 			branch_chunks.append_array(chunk.children)
 
-func add_tree_chunk(pos, size, depth):
+func add_tree_chunk(pos, size):
 	var chunk = TreeChunk.instantiate()
 	chunk.position.x = pos.x
 	chunk.position.z = pos.y
 	chunk.size = size
 	chunk.blueprint = $Blueprint
-	chunk.depth = depth
 	chunk.render()
 	add_child(chunk)
 	return chunk
 
 
 func should_split(chunk, viewpoint2):
-	return chunk.distance_to_edge(viewpoint2) < chunk.size / 2 and chunk.size > min_size
+	return chunk.distance_to_edge(viewpoint2) < chunk.size * 2 and chunk.size > chunk.ntiles / $Blueprint.resolution
 
 func should_unsplit(chunk, viewpoint2):
-	return chunk.distance_to_edge(viewpoint2) > chunk.size * 2
+	return chunk.distance_to_edge(viewpoint2) > chunk.size * 4
 
 

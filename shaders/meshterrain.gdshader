@@ -38,18 +38,18 @@ void vertex() {
 
 
 void fragment() {
-	if (p.y < 0.0) {
-		discard;
-	}
 	vec2 tex_uv = fract(p.xz / texture_size);
 // 	sampler2D tex = normals.y > 0.7 ? stone_texture : p.y < 2.0 ? sand_texture : grass_texture;
-	ALBEDO =
+	vec4 t =
 		normals.y < 0.7 ?
-			texture(stone_texture, tex_uv).xyz :
-			(p.y + snoise(p.xz * 40.0) * 0.05 + snoise(p.xz * 1.0) * 0.1 + snoise(p.xz * 0.05) * 0.4 < 1.5 ?
-				texture(sand_texture, tex_uv).xyz :
-				texture(grass_texture, tex_uv).xyz
+			texture(stone_texture, tex_uv) :
+			(p.y + snoise(p.xz * 20.0) * 0.02 + snoise(p.xz * 1.0) * 0.1 + snoise(p.xz * 0.05) * 0.4 < 1.5 ?
+				texture(sand_texture, tex_uv) :
+				texture(grass_texture, tex_uv)
 			);
+	float sea_height = clamp(1.0 + p.y/4.0, 0.0, 1.0);
+	vec3 blue = vec3(sea_height, sea_height, 1.0);
+	ALBEDO = blue * t.xyz;
 // 	ALBEDO = mix(
 // 		texture(stone_texture, tex_uv).xyz,
 // 		mix(
