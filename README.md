@@ -13,3 +13,9 @@ The drawn mesh can be either a plane mesh that is then moved to the correct heig
 
 - background loading/building of meshes and collision shapes
 - include small dense objects like grass
+
+## Licence
+
+This project can be used under the terms of the MIT licence
+
+Some code files from external projects is included. See the licence at the top of those files for their licence terms
