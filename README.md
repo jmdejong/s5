@@ -1,3 +1,5 @@
+Superceded by [s6](https://github.com/jmdejong/s6), which has more functionality and a better project structure
+
 # 3D procedural large open world experiments
 
 Trying to build a heightmap terrain system.
